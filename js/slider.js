@@ -109,6 +109,7 @@ prevButton.addEventListener("click", () => {
     if (currentIndex > 0) {
         activityMode = false
         currentIndex--
+        currentActivityIndex = 0
         updateContent() // Detiene la lectura y actualiza contenido
     }
 })
@@ -116,6 +117,7 @@ prevButton.addEventListener("click", () => {
 nextButton.addEventListener("click", () => {
     if (currentIndex < bookOrder.length - 1) {
         currentIndex++
+        currentActivityIndex = 0
         updateContent() // Detiene la lectura y actualiza contenido
     }
 })
@@ -253,7 +255,12 @@ function createImageSelectionActivity() {
         .flat() // Flattens the array of arrays into a single-level array
         .filter((activity) => activity.type === "image_selection")
 
-    navigateActivity(imageSelection[currentActivityIndex])
+    if (currentActivityIndex < imageSelection.length) {
+        const element = document.getElementById("activity-container")
+        if (element) imageWrapper.removeChild(element)
+        navigateActivity(imageSelection[currentActivityIndex])
+        currentActivityIndex++
+    }
 }
 
 function navigateActivity(activity) {
@@ -421,7 +428,6 @@ function navigateActivity(activity) {
     continueButton.addEventListener("click", () => {
         // Logic to go to the next activity
         // currentActivityIndex++
-        currentActivityIndex++
         loadNextActivity() // Assuming `loadNextActivity` handles loading the next activity
     })
 
@@ -434,7 +440,5 @@ function navigateActivity(activity) {
 }
 
 function loadNextActivity() {
-    const element = document.getElementById("activity-container")
-    if (element) imageWrapper.removeChild(element)
     createImageSelectionActivity()
 }
