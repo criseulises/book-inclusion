@@ -240,13 +240,13 @@ function closeSignLanguageVideo() {
 }
 closeVideoButton.addEventListener("click", closeSignLanguageVideo)
 
-function activityModeFunction() {}
-
 function createElement() {
     console.log(bookOrder[currentIndex])
 
     if (bookOrder[currentIndex] == "image_selection") {
         createImageSelectionActivity()
+    } else {
+        createVowelSelectionActivity()
     }
 }
 
@@ -441,4 +441,175 @@ function navigateActivity(activity) {
 
 function loadNextActivity() {
     createImageSelectionActivity()
+}
+
+function createVowelSelectionActivity() {
+    const vowelSelection = activities
+        .flat() // Flatten the array of arrays into a single-level array
+        .filter((activity) => activity.type === "vowel_selection")
+    console.log(vowelSelection)
+
+    if (currentActivityIndex < vowelSelection.length) {
+        const element = document.getElementById("activity-container")
+        if (element) imageWrapper.removeChild(element) // Remove any existing activity container
+        navigateVowelActivity(vowelSelection[currentActivityIndex]) // Navigate to the current vowel activity
+        currentActivityIndex++
+    }
+}
+
+function navigateVowelActivity(activity) {
+    // Create the main activity container
+    const activityContainer = document.createElement("div")
+    activityContainer.style.display = "flex"
+    activityContainer.style.flexDirection = "column"
+    activityContainer.style.alignItems = "center"
+    activityContainer.style.padding = "20px"
+    activityContainer.style.backgroundColor = "#ffffff"
+    activityContainer.style.borderRadius = "10px"
+    activityContainer.style.boxShadow = "0px 4px 10px rgba(0, 0, 0, 0.2)"
+    activityContainer.style.width = "100%"
+    activityContainer.style.maxWidth = "900px"
+    activityContainer.style.margin = "auto"
+    activityContainer.id = "activity-container"
+
+    // Create the instruction text
+    const instructionText = document.createElement("h2")
+    instructionText.innerText = activity.text // Example: 'Selecciona la vocal que falta en la palabra'
+    instructionText.style.fontSize = "24px"
+    instructionText.style.color = "#333"
+    instructionText.style.textAlign = "center"
+    instructionText.style.marginBottom = "20px"
+    activityContainer.appendChild(instructionText)
+
+    // Create the main word container
+    const wordContainer = document.createElement("div")
+    wordContainer.style.display = "flex"
+    wordContainer.style.alignItems = "center"
+    wordContainer.style.justifyContent = "center"
+    wordContainer.style.backgroundColor = "#f39c12"
+    wordContainer.style.borderRadius = "10px"
+    wordContainer.style.padding = "20px"
+    wordContainer.style.marginBottom = "20px"
+
+    const wordText = document.createElement("span")
+    wordText.innerHTML = activity.word // Example: "Y_ca"
+    wordText.style.fontSize = "36px"
+    wordText.style.fontWeight = "bold"
+    wordText.style.color = "#fff"
+    wordContainer.appendChild(wordText)
+
+    activityContainer.appendChild(wordContainer)
+
+    // Create the vowels container
+    const vowelsContainer = document.createElement("div")
+    vowelsContainer.style.display = "flex"
+    vowelsContainer.style.justifyContent = "center"
+    vowelsContainer.style.gap = "20px"
+    vowelsContainer.style.marginBottom = "20px"
+
+    activity.options.forEach((vowel) => {
+        const vowelBox = document.createElement("div")
+        vowelBox.style.display = "flex"
+        vowelBox.style.alignItems = "center"
+        vowelBox.style.justifyContent = "center"
+        vowelBox.style.width = "60px"
+        vowelBox.style.height = "60px"
+        vowelBox.style.backgroundColor = "#fff"
+        vowelBox.style.border = "2px solid #333"
+        vowelBox.style.borderRadius = "10px"
+        vowelBox.style.cursor = "pointer"
+        vowelBox.style.fontSize = "24px"
+        vowelBox.style.fontWeight = "bold"
+        vowelBox.style.color = "#333"
+        vowelBox.innerText = vowel
+
+        // Event listener for vowel selection
+        vowelBox.addEventListener("click", () => {
+            if (vowel === activity.correctAnswer) {
+                wordText.innerHTML = activity.word.replace("_", vowel) // Replace the underscore with the correct vowel
+                instructionText.innerText = "¡Muy bien!"
+                instructionText.style.color = "green"
+            } else {
+                instructionText.innerText = "Intenta de nuevo"
+                instructionText.style.color = "red"
+            }
+        })
+
+        vowelsContainer.appendChild(vowelBox)
+    })
+
+    activityContainer.appendChild(vowelsContainer)
+
+    // Create the buttons container
+    const buttonsContainer = document.createElement("div")
+    buttonsContainer.style.display = "flex"
+    buttonsContainer.style.justifyContent = "space-between"
+    buttonsContainer.style.marginTop = "20px"
+    buttonsContainer.style.width = "100%"
+
+    // Create the "Salir" button
+    const exitButton = document.createElement("button")
+    exitButton.innerText = "Salir"
+    exitButton.style.backgroundColor = "#e74c3c"
+    exitButton.style.color = "white"
+    exitButton.style.border = "none"
+    exitButton.style.borderRadius = "8px"
+    exitButton.style.padding = "10px 20px"
+    exitButton.style.fontSize = "16px"
+    exitButton.style.cursor = "pointer"
+
+    exitButton.addEventListener("click", () => {
+        // Logic to go back to the start of the book
+        currentIndex = 0
+        updateContent()
+    })
+
+    buttonsContainer.appendChild(exitButton)
+
+    // Create the "Reintentar" button
+    const retryButton = document.createElement("button")
+    retryButton.innerText = "Reintentar"
+    retryButton.style.backgroundColor = "#f39c12"
+    retryButton.style.color = "white"
+    retryButton.style.border = "none"
+    retryButton.style.borderRadius = "8px"
+    retryButton.style.padding = "10px 20px"
+    retryButton.style.fontSize = "16px"
+    retryButton.style.cursor = "pointer"
+
+    retryButton.addEventListener("click", () => {
+        // Logic to recreate the activity
+        const element = document.getElementById("activity-container")
+        if (element) imageWrapper.removeChild(element)
+        createVowelSelectionActivity() // Recreate the activity
+    })
+
+    buttonsContainer.appendChild(retryButton)
+
+    // Create the "Continuar" button
+    const continueButton = document.createElement("button")
+    continueButton.innerText = "Continuar"
+    continueButton.style.backgroundColor = "#27ae60"
+    continueButton.style.color = "white"
+    continueButton.style.border = "none"
+    continueButton.style.borderRadius = "8px"
+    continueButton.style.padding = "10px 20px"
+    continueButton.style.fontSize = "16px"
+    continueButton.style.cursor = "pointer"
+
+    continueButton.addEventListener("click", () => {
+        // Logic to go to the next activity
+        loadNextActivityVowel() // Assuming `loadNextActivity` handles loading the next activity
+    })
+
+    buttonsContainer.appendChild(continueButton)
+
+    activityContainer.appendChild(buttonsContainer)
+
+    // Append the activity container to the main wrapper
+    imageWrapper.appendChild(activityContainer)
+}
+
+function loadNextActivityVowel() {
+    createVowelSelectionActivity()
 }
