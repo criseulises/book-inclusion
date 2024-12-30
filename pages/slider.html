@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La Yuca - Slider</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://code.responsivevoice.org/responsivevoice.js?key=dVK0fH93"></script>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="navbar-brand">La Yuca</div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="slider-container">
+      <div class="image-wrapper">
+        <p id="page-text" class="page-text"></p>
+        <img id="current-page" src="" alt="Página actual" class="slider-image">
+      </div>
+
+      <div class="slider-controls">
+        <button id="prev-button">«</button>
+        <button id="next-button">»</button>
+      </div>
+
+      <div class="action-buttons">
+        <button id="speak-text-button">Leer Texto</button>
+        <button id="pause-text-button">Pausar/Reanudar</button>
+        <button id="increase-text-button">Aumentar Texto</button>
+        <button id="decrease-text-button">Disminuir Texto</button>
+          <button id="zoom-in-button">Aumentar Pantalla</button>
+          <button id="zoom-out-button">Reducir Pantalla</button>
+          <button id="sign-language-button">Lenguaje de Señas</button>
+
+      </div>
+
+      <div id="sign-language-modal" class="video-modal">
+        <div class="video-container">
+          <video id="sign-language-video" controls>
+            <source id="video-source" src="" type="video/mp4">
+            Tu navegador no soporta la reproducción de este video.
+          </video>
+          <button id="close-video-button" class="close-video-button">X</button>
+        </div>
+      </div>
+      
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2024 Librería Inclusiva. Todos los derechos reservados.</p>
+  </footer>
+
+  <script type="module" src="../js/slider.js"></script>
+</body>
+</html>
