@@ -79,11 +79,15 @@ function updateContent() {
 }
 
 // Función para leer el texto usando ResponsiveVoice.js
-function speakText() {
+function speakText(text) {
+    responsiveVoice.speak(text, "Spanish Latin American Female")
+}
+
+function insertTextToSpeak() {
     const currentPage = pages[currentIndex]
     if (currentPage.text) {
         responsiveVoice.cancel() // Asegurarse de detener cualquier lectura en curso
-        responsiveVoice.speak(currentPage.text, "Spanish Latin American Female")
+        speakText(currentPage.text)
         isPaused = false // Reiniciar el estado de pausa
     } else {
         console.warn("No hay texto para leer.")
@@ -123,7 +127,7 @@ nextButton.addEventListener("click", () => {
 })
 
 // Manejo de botones
-speakTextButton.addEventListener("click", speakText)
+speakTextButton.addEventListener("click", insertTextToSpeak)
 pauseTextButton.addEventListener("click", togglePauseText)
 increaseTextButton.addEventListener("click", increaseTextSize)
 decreaseTextButton.addEventListener("click", decreaseTextSize)
@@ -225,12 +229,16 @@ function playSignLanguageVideo() {
     console.log(currentPage)
 
     if (currentPage.signLanguageVideo) {
-        videoSource.src = currentPage.signLanguageVideo
-        videoElement.load() // Recargar el video
-        videoModal.style.display = "flex" // Mostrar el modal
+        insertSignLanguageVideo(currentPage.signLanguageVideo)
     } else {
         console.warn("No hay video de lenguaje de señas disponible para esta página.")
     }
+}
+
+function insertSignLanguageVideo(signLanguageVideo) {
+    videoSource.src = signLanguageVideo
+    videoElement.load() // Recargar el video
+    videoModal.style.display = "flex" // Mostrar el modal
 }
 
 signLanguageButton.addEventListener("click", playSignLanguageVideo)
@@ -268,7 +276,6 @@ function navigateActivity(activity) {
     const activityContainer = document.createElement("div")
     activityContainer.style.display = "flex"
     activityContainer.style.flexDirection = "column"
-    activityContainer.style.alignItems = "center"
     activityContainer.style.padding = "20px"
     activityContainer.style.backgroundColor = "#ffffff"
     activityContainer.style.borderRadius = "10px"
@@ -287,31 +294,61 @@ function navigateActivity(activity) {
     instructionText.style.marginBottom = "20px"
     activityContainer.appendChild(instructionText)
 
-    // Create the word container
+    // Create the main layout container
+    const layoutContainer = document.createElement("div")
+    layoutContainer.style.display = "flex"
+    layoutContainer.style.justifyContent = "space-between"
+    layoutContainer.style.alignItems = "center"
+    layoutContainer.style.width = "100%"
+    layoutContainer.style.marginBottom = "20px"
+
+    // Create the word container (left side)
     const wordContainer = document.createElement("div")
-    wordContainer.style.border = "2px solid orange"
-    wordContainer.style.borderRadius = "8px"
-    wordContainer.style.padding = "10px 20px"
-    wordContainer.style.marginBottom = "20px"
-    wordContainer.style.display = "inline-block"
+    wordContainer.style.marginRight = "20px" // Spacing between word and images
+    wordContainer.style.width = "40%"
+    wordContainer.style.textAlign = "center"
 
     const wordText = document.createElement("span")
+    wordText.style.border = "2px solid orange"
+    wordText.style.padding = "10px 20px"
+    wordText.style.borderRadius = "8px"
     wordText.innerText = activity.word
     wordText.style.fontSize = "28px"
     wordText.style.fontWeight = "bold"
     wordText.style.color = "#333"
     wordContainer.appendChild(wordText)
 
-    activityContainer.appendChild(wordContainer)
+    // Add a video element below the wordText
+    const videoContainer = document.createElement("div")
+    videoContainer.style.marginTop = "20px"
+    videoContainer.style.textAlign = "center"
 
-    // Create the images container
+    // Create the video element
+    const videoElement = document.createElement("video")
+    videoElement.controls = false
+    videoElement.style.width = "100%"
+    videoElement.style.maxWidth = "400px"
+    videoElement.style.borderRadius = "10px"
+    videoElement.style.boxShadow = "0px 4px 10px rgba(0, 0, 0, 0.2)"
+    videoElement.src = "../assets/videos/palabra_hombre.mp4" // Replace with the downloadable link from Google Drive
+    videoElement.style.display = "none"
+    videoElement.id = "sign-language-video-activity"
+    videoElement.muted = true
+
+    const btn = document.createElement('button')
+    btn.addEventListener("click", signLanguageVowelActivity)
+    // Add the word container to the layout container
+    layoutContainer.appendChild(wordContainer)
+    videoContainer.appendChild(videoElement)
+    wordContainer.appendChild(videoContainer)
+    wordContainer.appendChild(btn)
+
+    // Create the images container (right side)
     const imagesContainer = document.createElement("div")
     imagesContainer.style.display = "grid"
     imagesContainer.style.gridTemplateColumns = "repeat(3, 1fr)"
     imagesContainer.style.gap = "20px"
-    imagesContainer.style.marginBottom = "20px"
-
-    const correctAnswer = activity.word
+    imagesContainer.style.width = "60%"
 
     // Add images and radio buttons
     activity.images.forEach((img) => {
@@ -323,8 +360,8 @@ function navigateActivity(activity) {
         const image = document.createElement("img")
         image.src = img.src
         image.alt = img.alt
-        image.style.width = "120px"
-        image.style.height = "120px"
+        image.style.width = "100px"
+        image.style.height = "100px"
         image.style.borderRadius = "8px"
         image.style.boxShadow = "0px 4px 6px rgba(0, 0, 0, 0.1)"
         image.style.cursor = "pointer"
@@ -334,32 +371,25 @@ function navigateActivity(activity) {
         radioButton.name = "activity"
         radioButton.value = img.alt
         radioButton.style.marginTop = "10px"
-        radioButton.style.accentColor = "#4CAF50" // Style the radio button
-        radioButton.style.width = "20px"
-        radioButton.style.height = "20px"
 
         // Add click event to image to select the corresponding radio button
         image.addEventListener("click", () => {
             radioButton.checked = true
-
-            if (radioButton.value === correctAnswer) {
-                instructionText.innerText = "¡Muy bien!"
-                instructionText.style.color = "green"
-            } else {
-                instructionText.innerText = "Intenta de nuevo"
-                instructionText.style.color = "red"
-            }
-        })
-
-        // Event listener to handle selection and feedback for the radio button
-        radioButton.addEventListener("change", () => {
-            if (radioButton.value === correctAnswer) {
-                instructionText.innerText = "¡Muy bien!"
-                instructionText.style.color = "green"
-            } else {
-                instructionText.innerText = "Intenta de nuevo"
-                instructionText.style.color = "red"
-            }
+            speakText(radioButton.value)
+            // Set feedback text and audio
+            setTimeout(() => {
+                const audio = new Audio()
+                if (radioButton.value === activity.word) {
+                    instructionText.innerText = "¡Muy bien!"
+                    instructionText.style.color = "green"
+                    audio.src = "../assets/audios/muy_bien.wav" // Correct answer audio
+                } else {
+                    instructionText.innerText = "Intenta de nuevo"
+                    instructionText.style.color = "red"
+                    audio.src = "../assets/audios/intenta_de_nuevo.wav" // Incorrect answer audio
+                }
+                audio.play()
+            }, 1000)
         })
 
         imageWrapper.appendChild(image)
@@ -367,7 +397,11 @@ function navigateActivity(activity) {
         imagesContainer.appendChild(imageWrapper)
     })
 
-    activityContainer.appendChild(imagesContainer)
+    // Add the images container to the layout container
+    layoutContainer.appendChild(imagesContainer)
+
+    // Add the layout container to the activity container
+    activityContainer.appendChild(layoutContainer)
 
     // Create the buttons container
     const buttonsContainer = document.createElement("div")
@@ -376,6 +410,7 @@ function navigateActivity(activity) {
     buttonsContainer.style.marginTop = "20px"
     buttonsContainer.style.width = "100%"
 
+    
     // Create the "Salir" button
     const exitButton = document.createElement("button")
     exitButton.innerText = "Salir"
@@ -386,13 +421,11 @@ function navigateActivity(activity) {
     exitButton.style.padding = "10px 20px"
     exitButton.style.fontSize = "16px"
     exitButton.style.cursor = "pointer"
-
     exitButton.addEventListener("click", () => {
         // Logic to go back to the start of the book
         currentIndex = 0
         updateContent()
     })
-
     buttonsContainer.appendChild(exitButton)
 
     // Create the "Reintentar" button
@@ -405,13 +438,11 @@ function navigateActivity(activity) {
     retryButton.style.padding = "10px 20px"
     retryButton.style.fontSize = "16px"
     retryButton.style.cursor = "pointer"
-
     retryButton.addEventListener("click", () => {
         // Logic to recreate the activity
         imageWrapper.innerHTML = ""
         createActivity() // Assuming `createActivity` encapsulates this logic
     })
-
     buttonsContainer.appendChild(retryButton)
 
     // Create the "Continuar" button
@@ -424,15 +455,12 @@ function navigateActivity(activity) {
     continueButton.style.padding = "10px 20px"
     continueButton.style.fontSize = "16px"
     continueButton.style.cursor = "pointer"
-
     continueButton.addEventListener("click", () => {
-        // Logic to go to the next activity
-        // currentActivityIndex++
         loadNextActivity() // Assuming `loadNextActivity` handles loading the next activity
     })
-
     buttonsContainer.appendChild(continueButton)
 
+    // Add the buttons container to the activity container
     activityContainer.appendChild(buttonsContainer)
 
     // Append the activity container to the main wrapper
@@ -451,8 +479,8 @@ function createVowelSelectionActivity() {
 
     if (currentActivityIndex < vowelSelection.length) {
         const element = document.getElementById("activity-container")
-        if (element) imageWrapper.removeChild(element) // Remove any existing activity container
-        navigateVowelActivity(vowelSelection[currentActivityIndex]) // Navigate to the current vowel activity
+        if (element) imageWrapper.removeChild(element)
+        navigateVowelActivity(vowelSelection[currentActivityIndex])
         currentActivityIndex++
     }
 }
@@ -474,7 +502,7 @@ function navigateVowelActivity(activity) {
 
     // Create the instruction text
     const instructionText = document.createElement("h2")
-    instructionText.innerText = activity.text // Example: 'Selecciona la vocal que falta en la palabra'
+    instructionText.innerText = activity.text
     instructionText.style.fontSize = "24px"
     instructionText.style.color = "#333"
     instructionText.style.textAlign = "center"
@@ -612,4 +640,13 @@ function navigateVowelActivity(activity) {
 
 function loadNextActivityVowel() {
     createVowelSelectionActivity()
+}
+
+function signLanguageVowelActivity() {
+    const videoElement = document.getElementById("sign-language-video-activity")
+    if (videoElement.style.display === "none") {
+        videoElement.style.display = "block"
+    } else {
+        videoElement.style.display = "none"
+    }
 }
