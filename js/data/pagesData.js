@@ -119,6 +119,6 @@ const pages = [
         audio: "../assets/audio/page12.mp3",
         signLanguageVideo: "../assets/videos/page12.mp4",
     },
-];
+]
 
-export default pages;
+export default pages

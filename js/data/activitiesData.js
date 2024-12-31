@@ -1,5 +1,5 @@
 const activityData = [
-    [ 
+    [
         {
             activityName: "Select the correct image",
             type: "image_selection",
@@ -37,7 +37,7 @@ const activityData = [
             word: "Y_ca", // Underscore represents the missing vowel
             options: ["a", "e", "i", "o", "u"], // Options to choose from
             correctAnswer: "u", // Correct vowel
-            image: "../assets/images/activities/yuca.png"
+            image: "../assets/images/activities/yuca.png",
         },
         {
             activityName: "Select the missing vowel",
@@ -46,7 +46,7 @@ const activityData = [
             word: "Platano", // Underscore represents the missing vowel
             options: ["a", "e", "i", "o", "u"], // Options to choose from
             correctAnswer: "u", // Correct vowel
-            image: "../assets/images/activities/yuca.png"
+            image: "../assets/images/activities/yuca.png",
         },
     ],
 ]

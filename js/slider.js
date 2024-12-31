@@ -666,7 +666,7 @@ function navigateVowelActivity(activity) {
 
         // Event listener for vowel selection
         vowelBox.addEventListener("click", () => {
-            let audio = "";
+            let audio = ""
             switch (vowel) {
                 case "a":
                     audio = new Audio("../assets/audios/Vocal A.wav")
