@@ -335,13 +335,10 @@ function navigateActivity(activity) {
     videoElement.id = "sign-language-video-activity"
     videoElement.muted = true
 
-    const btn = document.createElement('button')
-    btn.addEventListener("click", signLanguageVowelActivity)
     // Add the word container to the layout container
     layoutContainer.appendChild(wordContainer)
     videoContainer.appendChild(videoElement)
     wordContainer.appendChild(videoContainer)
-    wordContainer.appendChild(btn)
 
     // Create the images container (right side)
     const imagesContainer = document.createElement("div")
@@ -403,14 +400,19 @@ function navigateActivity(activity) {
     // Add the layout container to the activity container
     activityContainer.appendChild(layoutContainer)
 
-    // Create the buttons container
+    // Create a container for all the buttons and sign language video
+    const bottomContainer = document.createElement("div")
+    bottomContainer.style.display = "flex"
+    bottomContainer.style.justifyContent = "space-between"
+    bottomContainer.style.alignItems = "center"
+    bottomContainer.style.marginTop = "20px"
+    bottomContainer.style.width = "100%"
+
+    // Left container for action buttons
     const buttonsContainer = document.createElement("div")
     buttonsContainer.style.display = "flex"
-    buttonsContainer.style.justifyContent = "space-between"
-    buttonsContainer.style.marginTop = "20px"
-    buttonsContainer.style.width = "100%"
+    buttonsContainer.style.gap = "10px"
 
-    
     // Create the "Salir" button
     const exitButton = document.createElement("button")
     exitButton.innerText = "Salir"
@@ -460,8 +462,74 @@ function navigateActivity(activity) {
     })
     buttonsContainer.appendChild(continueButton)
 
-    // Add the buttons container to the activity container
-    activityContainer.appendChild(buttonsContainer)
+    // Add the buttons container to the left of the bottom container
+    bottomContainer.appendChild(buttonsContainer)
+
+    // Right container for the "Sign Language" button and video controls
+    const signLanguageContainer = document.createElement("div")
+    signLanguageContainer.style.display = "flex"
+    signLanguageContainer.style.flexDirection = "column"
+    signLanguageContainer.style.alignItems = "flex-end"
+    signLanguageContainer.style.gap = "10px"
+
+    // Create the "Sign Language" button
+    const signLanguageButton = document.createElement("button")
+    signLanguageButton.innerText = "Lenguaje de Señas"
+    signLanguageButton.style.backgroundColor = "#3498db"
+    signLanguageButton.style.color = "white"
+    signLanguageButton.style.border = "none"
+    signLanguageButton.style.borderRadius = "8px"
+    signLanguageButton.style.padding = "10px 20px"
+    signLanguageButton.style.fontSize = "16px"
+    signLanguageButton.style.cursor = "pointer"
+
+    let isVideoVisible = false // State to toggle video visibility
+    // const signLanguageVideo = document.createElement("video");
+    // signLanguageVideo.src = "../assets/videos/signLanguageVowelActivity.mp4"; // Replace with actual video path
+    // signLanguageVideo.controls = true;
+    // signLanguageVideo.style.display = "none"; // Initially hidden
+    // signLanguageVideo.style.width = "300px";
+    // signLanguageVideo.style.borderRadius = "10px";
+    // signLanguageVideo.style.boxShadow = "0px 4px 10px rgba(0, 0, 0, 0.2)";
+
+    const playPauseButton = document.createElement("button")
+    playPauseButton.innerText = "Reanudar"
+    playPauseButton.style.backgroundColor = "#8e44ad"
+    playPauseButton.style.color = "white"
+    playPauseButton.style.border = "none"
+    playPauseButton.style.borderRadius = "8px"
+    playPauseButton.style.padding = "10px 20px"
+    playPauseButton.style.fontSize = "16px"
+    playPauseButton.style.cursor = "pointer"
+    playPauseButton.style.display = "none" // Hidden initially
+
+    playPauseButton.addEventListener("click", () => {
+        console.log(videoElement.paused)
+
+        if (videoElement.paused) {
+            videoElement.play()
+            playPauseButton.innerText = "Pausar"
+        } else {
+            videoElement.pause()
+            playPauseButton.innerText = "Reanudar"
+        }
+    })
+
+    signLanguageButton.addEventListener("click", () => {
+        isVideoVisible = !isVideoVisible
+        videoElement.style.display = isVideoVisible ? "block" : "none"
+        playPauseButton.style.display = isVideoVisible ? "inline-block" : "none"
+    })
+
+    // Add the "Sign Language" button, video, and play/pause button to the right container
+    signLanguageContainer.appendChild(signLanguageButton)
+    signLanguageContainer.appendChild(playPauseButton)
+
+    // Add the right container to the bottom container
+    bottomContainer.appendChild(signLanguageContainer)
+
+    // Add the bottom container to the activity container
+    activityContainer.appendChild(bottomContainer)
 
     // Append the activity container to the main wrapper
     imageWrapper.appendChild(activityContainer)
@@ -509,31 +577,70 @@ function navigateVowelActivity(activity) {
     instructionText.style.marginBottom = "20px"
     activityContainer.appendChild(instructionText)
 
-    // Create the main word container
-    const wordContainer = document.createElement("div")
-    wordContainer.style.display = "flex"
-    wordContainer.style.alignItems = "center"
-    wordContainer.style.justifyContent = "center"
-    wordContainer.style.backgroundColor = "#f39c12"
-    wordContainer.style.borderRadius = "10px"
-    wordContainer.style.padding = "20px"
-    wordContainer.style.marginBottom = "20px"
+    // Create the main layout container
+    const layoutContainer = document.createElement("div")
+    layoutContainer.style.display = "flex"
+    layoutContainer.style.justifyContent = "space-between"
+    layoutContainer.style.alignItems = "center"
+    layoutContainer.style.width = "100%"
+    layoutContainer.style.marginBottom = "20px"
+
+    // Create the image and video container (left side)
+    const mediaContainer = document.createElement("div")
+    mediaContainer.style.display = "flex"
+    mediaContainer.style.flexDirection = "column"
+    mediaContainer.style.alignItems = "center"
+    mediaContainer.style.width = "40%"
+
+    // Add the image
+    const imageElement = document.createElement("img")
+    imageElement.src = activity.image // Path to the image
+    imageElement.alt = "Activity Image"
+    imageElement.style.width = "100%"
+    imageElement.style.maxWidth = "300px"
+    imageElement.style.borderRadius = "10px"
+    // imageElement.style.boxShadow = "0px 4px 10px rgba(0, 0, 0, 0.2)";
+    mediaContainer.appendChild(imageElement)
+
+    // Add the video element below the image
+    const videoElement = document.createElement("video")
+    videoElement.src = "../assets/videos/palabra_hombre.mp4" // Replace with the correct video path
+    videoElement.controls = false
+    videoElement.style.width = "100%"
+    videoElement.style.maxWidth = "300px"
+    videoElement.style.borderRadius = "10px"
+    videoElement.style.boxShadow = "0px 4px 10px rgba(0, 0, 0, 0.2)"
+    videoElement.style.marginTop = "20px"
+    videoElement.style.display = "none"
+    videoElement.muted = true
+    mediaContainer.appendChild(videoElement)
+
+    // Add the media container to the layout container
+    layoutContainer.appendChild(mediaContainer)
+
+    // Create the activity container (right side)
+    const activityRightContainer = document.createElement("div")
+    activityRightContainer.style.display = "flex"
+    activityRightContainer.style.flexDirection = "column"
+    activityRightContainer.style.alignItems = "center"
+    activityRightContainer.style.width = "60%"
+    activityRightContainer.style.backgroundColor = "#f39c12"
+    activityRightContainer.style.borderRadius = "10px"
+    activityRightContainer.style.padding = "20px"
 
     const wordText = document.createElement("span")
     wordText.innerHTML = activity.word // Example: "Y_ca"
     wordText.style.fontSize = "36px"
     wordText.style.fontWeight = "bold"
     wordText.style.color = "#fff"
-    wordContainer.appendChild(wordText)
-
-    activityContainer.appendChild(wordContainer)
+    wordText.style.marginBottom = "20px"
+    activityRightContainer.appendChild(wordText)
 
     // Create the vowels container
     const vowelsContainer = document.createElement("div")
     vowelsContainer.style.display = "flex"
     vowelsContainer.style.justifyContent = "center"
     vowelsContainer.style.gap = "20px"
-    vowelsContainer.style.marginBottom = "20px"
 
     activity.options.forEach((vowel) => {
         const vowelBox = document.createElement("div")
@@ -557,23 +664,45 @@ function navigateVowelActivity(activity) {
                 wordText.innerHTML = activity.word.replace("_", vowel) // Replace the underscore with the correct vowel
                 instructionText.innerText = "¡Muy bien!"
                 instructionText.style.color = "green"
+
+                // Play correct sound after a delay
+                setTimeout(() => {
+                    const audio = new Audio("../assets/audios/muy_bien.wav")
+                    audio.play()
+                }, 0)
             } else {
                 instructionText.innerText = "Intenta de nuevo"
                 instructionText.style.color = "red"
+
+                // Play incorrect sound after a delay
+                setTimeout(() => {
+                    const audio = new Audio("../assets/audios/intenta_de_nuevo.wav")
+                    audio.play()
+                }, 0)
             }
         })
 
         vowelsContainer.appendChild(vowelBox)
     })
 
-    activityContainer.appendChild(vowelsContainer)
+    activityRightContainer.appendChild(vowelsContainer)
+    layoutContainer.appendChild(activityRightContainer)
 
-    // Create the buttons container
+    // Add the layout container to the activity container
+    activityContainer.appendChild(layoutContainer)
+
+    // Create the bottom container
+    const bottomContainer = document.createElement("div")
+    bottomContainer.style.display = "flex"
+    bottomContainer.style.justifyContent = "space-between"
+    bottomContainer.style.alignItems = "center"
+    bottomContainer.style.marginTop = "20px"
+    bottomContainer.style.width = "100%"
+
+    // Left container for action buttons
     const buttonsContainer = document.createElement("div")
     buttonsContainer.style.display = "flex"
-    buttonsContainer.style.justifyContent = "space-between"
-    buttonsContainer.style.marginTop = "20px"
-    buttonsContainer.style.width = "100%"
+    buttonsContainer.style.gap = "10px"
 
     // Create the "Salir" button
     const exitButton = document.createElement("button")
@@ -587,7 +716,6 @@ function navigateVowelActivity(activity) {
     exitButton.style.cursor = "pointer"
 
     exitButton.addEventListener("click", () => {
-        // Logic to go back to the start of the book
         currentIndex = 0
         updateContent()
     })
@@ -606,10 +734,9 @@ function navigateVowelActivity(activity) {
     retryButton.style.cursor = "pointer"
 
     retryButton.addEventListener("click", () => {
-        // Logic to recreate the activity
         const element = document.getElementById("activity-container")
         if (element) imageWrapper.removeChild(element)
-        createVowelSelectionActivity() // Recreate the activity
+        navigateVowelActivity(activity)
     })
 
     buttonsContainer.appendChild(retryButton)
@@ -626,13 +753,76 @@ function navigateVowelActivity(activity) {
     continueButton.style.cursor = "pointer"
 
     continueButton.addEventListener("click", () => {
-        // Logic to go to the next activity
-        loadNextActivityVowel() // Assuming `loadNextActivity` handles loading the next activity
+        loadNextActivityVowel()
     })
 
     buttonsContainer.appendChild(continueButton)
 
-    activityContainer.appendChild(buttonsContainer)
+    // Add the buttons container to the left of the bottom container
+    bottomContainer.appendChild(buttonsContainer)
+
+    // Right container for the "Sign Language" button
+    const signLanguageContainer = document.createElement("div")
+    signLanguageContainer.style.display = "flex"
+    signLanguageContainer.style.flexDirection = "column"
+    signLanguageContainer.style.alignItems = "flex-end"
+    signLanguageContainer.style.gap = "10px"
+
+    const signLanguageButton = document.createElement("button")
+    signLanguageButton.innerText = "Lenguaje de Señas"
+    signLanguageButton.style.backgroundColor = "#3498db"
+    signLanguageButton.style.color = "white"
+    signLanguageButton.style.border = "none"
+    signLanguageButton.style.borderRadius = "8px"
+    signLanguageButton.style.padding = "10px 20px"
+    signLanguageButton.style.fontSize = "16px"
+    signLanguageButton.style.cursor = "pointer"
+
+    let isVideoVisible = false
+
+    const playPauseButton = document.createElement("button")
+    playPauseButton.innerText = "Reanudar"
+    playPauseButton.style.backgroundColor = "#8e44ad"
+    playPauseButton.style.color = "white"
+    playPauseButton.style.border = "none"
+    playPauseButton.style.borderRadius = "8px"
+    playPauseButton.style.padding = "10px 20px"
+    playPauseButton.style.fontSize = "16px"
+    playPauseButton.style.cursor = "pointer"
+    playPauseButton.style.display = "none"
+
+    playPauseButton.addEventListener("click", () => {
+        if (videoElement.paused) {
+            videoElement.play()
+            playPauseButton.innerText = "Pausar"
+        } else {
+            videoElement.pause()
+            playPauseButton.innerText = "Reanudar"
+        }
+    })
+
+    signLanguageButton.addEventListener("click", () => {
+        isVideoVisible = !isVideoVisible
+        videoElement.style.display = isVideoVisible ? "block" : "none"
+        playPauseButton.style.display = isVideoVisible ? "inline-block" : "none"
+
+        if (isVideoVisible) {
+            imageElement.style.display = "none"
+            videoElement.play()
+        } else {
+            imageElement.style.display = "block"
+            videoElement.pause()
+        }
+    })
+
+    signLanguageContainer.appendChild(signLanguageButton)
+    signLanguageContainer.appendChild(playPauseButton)
+
+    // Add the right container to the bottom container
+    bottomContainer.appendChild(signLanguageContainer)
+
+    // Add the bottom container to the activity container
+    activityContainer.appendChild(bottomContainer)
 
     // Append the activity container to the main wrapper
     imageWrapper.appendChild(activityContainer)
