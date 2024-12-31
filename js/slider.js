@@ -493,7 +493,7 @@ function navigateActivity(activity) {
     // signLanguageVideo.style.boxShadow = "0px 4px 10px rgba(0, 0, 0, 0.2)";
 
     const playPauseButton = document.createElement("button")
-    playPauseButton.innerText = "Reanudar"
+    playPauseButton.innerText = "Pausar"
     playPauseButton.style.backgroundColor = "#8e44ad"
     playPauseButton.style.color = "white"
     playPauseButton.style.border = "none"
@@ -519,6 +519,12 @@ function navigateActivity(activity) {
         isVideoVisible = !isVideoVisible
         videoElement.style.display = isVideoVisible ? "block" : "none"
         playPauseButton.style.display = isVideoVisible ? "inline-block" : "none"
+
+        if (isVideoVisible) {
+            videoElement.play()
+        } else {
+            videoElement.pause()
+        }
     })
 
     // Add the "Sign Language" button, video, and play/pause button to the right container
