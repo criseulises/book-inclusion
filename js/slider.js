@@ -666,6 +666,32 @@ function navigateVowelActivity(activity) {
 
         // Event listener for vowel selection
         vowelBox.addEventListener("click", () => {
+            let audio = "";
+            switch (vowel) {
+                case "a":
+                    audio = new Audio("../assets/audios/Vocal A.wav")
+                    audio.play()
+                    break
+                case "e":
+                    audio = new Audio("../assets/audios/Vocal E.wav")
+                    audio.play()
+                    break
+                case "i":
+                    audio = new Audio("../assets/audios/Vocal I.wav")
+                    audio.play()
+                    break
+                case "o":
+                    audio = new Audio("../assets/audios/Vocal O.wav")
+                    audio.play()
+                    break
+                case "u":
+                    audio = new Audio("../assets/audios/Vocal U.wav")
+                    audio.play()
+                    break
+
+                default:
+                    break
+            }
             if (vowel === activity.correctAnswer) {
                 wordText.innerHTML = activity.word.replace("_", vowel) // Replace the underscore with the correct vowel
                 instructionText.innerText = "¡Muy bien!"
@@ -675,7 +701,7 @@ function navigateVowelActivity(activity) {
                 setTimeout(() => {
                     const audio = new Audio("../assets/audios/muy_bien.wav")
                     audio.play()
-                }, 0)
+                }, 1000)
             } else {
                 instructionText.innerText = "Intenta de nuevo"
                 instructionText.style.color = "red"
@@ -684,7 +710,7 @@ function navigateVowelActivity(activity) {
                 setTimeout(() => {
                     const audio = new Audio("../assets/audios/intenta_de_nuevo.wav")
                     audio.play()
-                }, 0)
+                }, 1000)
             }
         })
 
