@@ -146,7 +146,7 @@ const activities = [
                 { src: "../assets/images/activities/hombre.png", alt: "Hombre", correct: false },
                 { src: "../assets/images/activities/perro.png", alt: "Perro", correct: true },
                 { src: "../assets/images/activities/niña.png", alt: "Niña", correct: false },
-                { src: "../assets/images/activities/casa.png", alt: "Casa", correct:  false},
+                { src: "../assets/images/activities/casa.png", alt: "Casa", correct: false },
                 { src: "../assets/images/activities/mujer.png", alt: "Mujer", correct: false },
                 { src: "../assets/images/activities/yuca.png", alt: "Yuca", correct: false },
             ],
@@ -167,7 +167,7 @@ const activities = [
             type: "vowel_selection",
             text: "Selecciona la vocal que falta en la palabra",
             word: "H_mbre",
-            options: ["a", "e", "i", "o", "u"], 
+            options: ["a", "e", "i", "o", "u"],
             correctAnswer: "o",
             image: "../assets/images/activities/hombre.png",
         },
@@ -178,7 +178,12 @@ let currentIndex = 0
 let isPaused = false
 let currentFontSize = 0
 let currentActivityIndex = 0
+let scaleLevel = 1
 
+const mainContainer = document.documentElement
+const zoomStep = 0.1
+const minScale = 0.5
+const maxScale = 2
 const imageElement = document.getElementById("current-page")
 const imageWrapper = document.getElementById("image-wrapper")
 const textElement = document.getElementById("page-text")
@@ -193,6 +198,8 @@ const videoSource = document.getElementById("video-source")
 const videoModal = document.getElementById("sign-language-modal")
 const videoElement = document.getElementById("sign-language-video")
 const closeVideoButton = document.getElementById("close-video-button")
+const zoomInButton = document.getElementById("zoom-in-button")
+const zoomOutButton = document.getElementById("zoom-out-button")
 
 const bookOrder = []
 for (let i = 0; i < pages.length; i++) {
@@ -208,9 +215,8 @@ for (let i = 0; i < activities.length; i++) {
 
 // Función para actualizar el contenido dinámico
 function updateContent() {
-    // Detener cualquier lectura en curso antes de actualizar
     responsiveVoice.cancel()
-    isPaused = false // Reiniciar el estado de pausa
+    isPaused = false
 
     if (bookOrder[currentIndex] == "page") {
         const element = document.getElementById("activity-container")
@@ -252,11 +258,6 @@ function updateContent() {
     }
 }
 
-// Función para leer el texto usando ResponsiveVoice.js
-function speakText(text) {
-    responsiveVoice.speak(text, "Spanish Latin American Female")
-}
-
 function insertTextToSpeak() {
     const currentPage = pages[currentIndex]
     if (currentPage.text) {
@@ -266,6 +267,11 @@ function insertTextToSpeak() {
     } else {
         console.warn("No hay texto para leer.")
     }
+}
+
+// Función para leer el texto usando ResponsiveVoice.js
+function speakText(text) {
+    responsiveVoice.speak(text, "Spanish Latin American Female")
 }
 
 // Función para pausar o reanudar la lectura
@@ -280,36 +286,12 @@ function togglePauseText() {
 }
 
 // Navegación entre páginas
-prevButton.addEventListener("click", () => {
-    if (currentIndex > 0) {
-        currentIndex--
-        currentActivityIndex = 0
-        updateContent() // Detiene la lectura y actualiza contenido
-    }
-})
-
-nextButton.addEventListener("click", () => {
-    if (currentIndex < bookOrder.length - 1) {
-        currentIndex++
-        currentActivityIndex = 0
-        updateContent() // Detiene la lectura y actualiza contenido
-    }
-})
-
-// Manejo de botones
-speakTextButton.addEventListener("click", insertTextToSpeak)
-pauseTextButton.addEventListener("click", togglePauseText)
-increaseTextButton.addEventListener("click", increaseTextSize)
-decreaseTextButton.addEventListener("click", decreaseTextSize)
-
-// Inicializar contenido al cargar
-updateContent()
 
 // Ajustar posición y tamaño del texto para que permanezca dentro de la imagen
 function adjustTextPosition() {
     const currentPage = pages[currentIndex]
-    const imageWidth = imageElement.clientWidth // Ancho actual de la imagen
-    const imageHeight = imageElement.clientHeight // Altura actual de la imagen
+    const imageWidth = imageElement.clientWidth
+    const imageHeight = imageElement.clientHeight
 
     const baseLeft = parseInt(currentPage.position.left)
     const baseTop = parseInt(currentPage.position.top)
@@ -323,14 +305,14 @@ function adjustTextPosition() {
     textElement.style.top = `${Math.max(topOffset, 0)}px`
     textElement.style.width = `${adjustedWidth}px`
 
-    textElement.style.maxHeight = `${imageHeight * 0.8}px` // Máximo 80% de la altura de la imagen
-    textElement.style.overflowY = "auto" // Agregar scroll si es necesario
+    textElement.style.maxHeight = `${imageHeight * 0.8}px`
+    textElement.style.overflowY = "auto"
 }
 
 function increaseTextSize() {
     const currentPage = pages[currentIndex]
-    const baseFontSize = parseInt(currentPage.fontSize) // Tamaño base inicial
-    currentFontSize = currentFontSize === 0 ? baseFontSize : currentFontSize // Establecer el tamaño actual si no está configurado
+    const baseFontSize = parseInt(currentPage.fontSize)
+    currentFontSize = currentFontSize === 0 ? baseFontSize : currentFontSize
     if (currentFontSize < baseFontSize * 2) {
         currentFontSize += 2
         textElement.style.fontSize = `${currentFontSize}px`
@@ -348,16 +330,6 @@ function decreaseTextSize() {
         adjustTextPosition()
     }
 }
-let scaleLevel = 1
-const zoomStep = 0.1
-const minScale = 0.5
-const maxScale = 2
-
-const mainContainer = document.documentElement // Escalar el HTML completo
-
-// Botones
-const zoomInButton = document.getElementById("zoom-in-button")
-const zoomOutButton = document.getElementById("zoom-out-button")
 
 // Función para aumentar el zoom
 function zoomIn() {
@@ -381,10 +353,6 @@ function applyZoom() {
     mainContainer.style.transformOrigin = "center top" // Establecer origen del escalado
 }
 
-// Eventos para los botones
-zoomInButton.addEventListener("click", zoomIn)
-zoomOutButton.addEventListener("click", zoomOut)
-
 function playSignLanguageVideo() {
     const currentPage = pages[currentIndex]
     console.log(currentPage)
@@ -402,12 +370,10 @@ function insertSignLanguageVideo(signLanguageVideo) {
     videoModal.style.display = "flex"
 }
 
-signLanguageButton.addEventListener("click", playSignLanguageVideo)
 function closeSignLanguageVideo() {
     videoElement.pause()
     videoModal.style.display = "none"
 }
-closeVideoButton.addEventListener("click", closeSignLanguageVideo)
 
 function createElement() {
     console.log(bookOrder[currentIndex])
@@ -965,3 +931,31 @@ function signLanguageVowelActivity() {
         videoElement.style.display = "none"
     }
 }
+
+// Manejo de botones
+speakTextButton.addEventListener("click", insertTextToSpeak)
+pauseTextButton.addEventListener("click", togglePauseText)
+increaseTextButton.addEventListener("click", increaseTextSize)
+decreaseTextButton.addEventListener("click", decreaseTextSize)
+zoomInButton.addEventListener("click", zoomIn)
+zoomOutButton.addEventListener("click", zoomOut)
+signLanguageButton.addEventListener("click", playSignLanguageVideo)
+closeVideoButton.addEventListener("click", closeSignLanguageVideo)
+
+prevButton.addEventListener("click", () => {
+    if (currentIndex > 0) {
+        currentIndex--
+        currentActivityIndex = 0
+        updateContent()
+    }
+})
+
+nextButton.addEventListener("click", () => {
+    if (currentIndex < bookOrder.length - 1) {
+        currentIndex++
+        currentActivityIndex = 0
+        updateContent()
+    }
+})
+
+updateContent()
