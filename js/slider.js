@@ -169,7 +169,7 @@ const activities = [
             word: "H_mbre",
             options: ["a", "e", "i", "o", "u"], 
             correctAnswer: "o",
-            image: "../assets/images/activities/yuca.png",
+            image: "../assets/images/activities/hombre.png",
         },
     ],
 ]
